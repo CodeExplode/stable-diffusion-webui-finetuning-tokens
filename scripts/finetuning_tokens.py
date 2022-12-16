@@ -46,13 +46,11 @@ def generate(text):
         
         startI = 0
         endI = 0
-        tries = 0
-        while not validate_reconstructed(clip, vocab, starts[startI], ends[endI]) and tries < 10:
+        while not validate_reconstructed(clip, vocab, starts[startI], ends[endI]):
             if startI < endI:
                 startI += 1
             else:
                 endI += 1
-            tries += 1
         
         token = starts.pop(startI) + ends.pop(endI)
         
