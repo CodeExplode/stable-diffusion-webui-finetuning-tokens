@@ -1,6 +1,6 @@
 ![preview image](FinetuningTokens_v1.png)
 
-A simple extension for web-ui to generate unique tokens for dreambooth/finetuning which are unlikely to conflict with existing concepts in the stable diffusion model.
+A simple extension for web-ui to generate unique tokens for dreambooth/finetuning which are unlikely to conflict with existing concepts in the stable diffusion model. Should be placed in the extensions folder, e.g. stable-diffusion-webui-master\extensions\webui_finetuning_tokens
 
 It creates a token out of an existing partial word + word in [the CLIP vocab](https://huggingface.co/runwayml/stable-diffusion-v1-5/raw/main/tokenizer/vocab.json)
 
