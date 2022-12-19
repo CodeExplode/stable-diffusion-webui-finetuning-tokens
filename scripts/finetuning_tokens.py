@@ -14,8 +14,11 @@ def validate_reconstructed(clip, vocab, subword, word):
 def generate(text):
     clip: FrozenCLIPEmbedder = shared.sd_model.cond_stage_model.wrapped
     vocab = {v: k for k, v in clip.tokenizer.get_vocab().items()}
-    special_characters = '0123456789!@#$%^&*()[]{}|~-+?_=,<>/\\"\'`.:;'
-    special_strings = [ 'bbc', 'cnn', 'cbs', 'pnr', 'nbc', 'mbc', 'msnbc', 'sbs', 'shh', 'lgb', 'lgbt', 'lgbtq', 'blm', 'mr', 'mrs', 'ms', 'nfl', 'nhl', 'bbq', 'gps', 'rgb', 'png', 'jpg', 'bmp', 'mpg', 'nfc', 'php', 'dns', 'sql', 'bmw', 'fml', 'wtf', 'dvd', 'vhs', 'rts', 'dnd', 'rpg', 'fps', 'ftl', 'www', 'http', 'https', 'tnt', 'cpr', 'ctv', 'phd', 'std', 'tsp', 'sks', 'nsfw', 'sfw']
+    special_characters = set('0123456789!@#$%^&*()[]{}|~-+?_=,<>/\\"\'`.:;')
+    special_strings = set([ 'bbc', 'cnn', 'cbs', 'pnr', 'nbc', 'mbc', 'msnbc', 'sbs', 'shh', 'lgb', 'lgbt', 'lgbtq', 
+                       'blm', 'mr', 'mrs', 'ms', 'nfl', 'nhl', 'bbq', 'gps', 'rgb', 'png', 'jpg', 'bmp', 'mpg', 'nfc', 
+                       'php', 'dns', 'sql', 'bmw', 'fml', 'wtf', 'dvd', 'vhs', 'rts', 'dnd', 'rpg', 'fps', 'ftl', 'www', 
+                       'http', 'https', 'tnt', 'cpr', 'ctv', 'phd', 'std', 'tsp', 'sks', 'nsfw', 'sfw'])
     
     starts = []
     ends = []
@@ -27,12 +30,13 @@ def generate(text):
         else:
             tokenList = starts
         
-        if len(tokenText) > 1 and not any(c in special_characters for c in tokenText) and not tokenText in special_strings:
+        if len(tokenText) > 1 and not (special_characters & set(tokenText)) and not tokenText in special_strings:
             tokenList.append(tokenText)
     
     # prioritize short text and least vowels to reduce conflicts with existing words https://stackoverflow.com/a/21115970
-    starts.sort(key = lambda word: 6 * sum(ch in 'aeiouy' for ch in word) + len(word))
-    ends.sort(key = lambda word: 6 * sum(ch in 'aeiouy' for ch in word) + len(word))
+    vowels = set('aeiouy')
+    starts.sort(key = lambda word: 6 * sum(ch in vowels for ch in word) + len(word))
+    ends.sort(key = lambda word: 6 * sum(ch in vowels for ch in word) + len(word))
     
     #print(f'starts: {starts}')
     #print(f'ends: {ends}')
